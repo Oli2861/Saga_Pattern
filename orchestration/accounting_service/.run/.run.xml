@@ -1,0 +1,21 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" type="JetRunConfigurationType">
+    <envs>
+      <env name="RABBITMQ_HOST" value="localhost" />
+      <env name="RABBITMQ_PORT" value="5672" />
+      <env name="RABBITMQ_EXCHANGE" value="exc" />
+      <env name="ACCOUNTING_SERVICE_REQUEST_CHANNEL" value="accounting_service_request_channel" />
+      <env name="POSTGRES_HOST" value="localhost" />
+      <env name="POSTGRES_PORT" value="5432" />
+      <env name="POSTGRES_USER" value="user" />
+      <env name="POSTGRES_PASSWORD" value="password" />
+      <env name="POSTGRES_DB" value="accountingdb" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.oli.ApplicationKt" />
+    <module name="accounting_service.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

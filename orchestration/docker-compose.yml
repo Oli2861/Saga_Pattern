@@ -1,0 +1,118 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.11.9-management
+    container_name: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - ./volumes/rabbitmq:/var/lib/rabbitmq/:rw
+      - ./volumes/rabbitmq/log:/var/log/rabbitmq/:rw
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - ./volumes/postgres/data/order_service:/var/lib/postgresql/data:rw
+      - ./volumes/postgres/logs/order_service:/var/log/postgresql:rw
+  order_service:
+    build:
+      context: order_service
+      dockerfile: Dockerfile
+    image: order_service
+    container_name: order_service
+    ports:
+      - "8081:8081"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE}
+      CUSTOMER_SERVICE_REQUEST_CHANNEL: ${CUSTOMER_SERVICE_REQUEST_CHANNEL}
+      ACCOUNTING_SERVICE_REQUEST_CHANNEL: ${ACCOUNTING_SERVICE_REQUEST_CHANNEL}
+      KITCHEN_SERVICE_REQUEST_CHANNEL: ${KITCHEN_SERVICE_REQUEST_CHANNEL}
+      CREATE_ORDER_SAGA_REPLY_CHANNEL: ${CREATE_ORDER_SAGA_REPLY_CHANNEL}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER_ORDER_SERVICE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_ORDER_SERVICE}
+      POSTGRES_DB: ${POSTGRES_DB_ORDER_SERVICE}
+    depends_on:
+      - rabbitmq
+      - postgres
+  customer_service:
+    build:
+      context: customer_service
+      dockerfile: Dockerfile
+    image: customer_service
+    container_name: customer_service
+    ports:
+      - "8082:8082"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE}
+      CUSTOMER_SERVICE_REQUEST_CHANNEL: ${CUSTOMER_SERVICE_REQUEST_CHANNEL}
+      ACCOUNTING_SERVICE_REQUEST_CHANNEL: ${ACCOUNTING_SERVICE_REQUEST_CHANNEL}
+      KITCHEN_SERVICE_REQUEST_CHANNEL: ${KITCHEN_SERVICE_REQUEST_CHANNEL}
+      CREATE_ORDER_SAGA_REPLY_CHANNEL: ${CREATE_ORDER_SAGA_REPLY_CHANNEL}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER_CUSTOMER_SERVICE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_CUSTOMER_SERVICE}
+      POSTGRES_DB: ${POSTGRES_DB_CUSTOMER_SERVICE}
+    depends_on:
+      - rabbitmq
+      - postgres
+  kitchenservice_service:
+    build: 
+      context: kitchenservice
+      dockerfile: Dockerfile
+    image: kitchen_service
+    container_name: kitchenservice_service
+    ports:
+      - "8083:8083"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE}
+      CUSTOMER_SERVICE_REQUEST_CHANNEL: ${CUSTOMER_SERVICE_REQUEST_CHANNEL}
+      ACCOUNTING_SERVICE_REQUEST_CHANNEL: ${ACCOUNTING_SERVICE_REQUEST_CHANNEL}
+      KITCHEN_SERVICE_REQUEST_CHANNEL: ${KITCHEN_SERVICE_REQUEST_CHANNEL}
+      CREATE_ORDER_SAGA_REPLY_CHANNEL: ${CREATE_ORDER_SAGA_REPLY_CHANNEL}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER_KITCHEN_SERVICE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_KITCHEN_SERVICE}
+      POSTGRES_DB: ${POSTGRES_DB_KITCHEN_SERVICE}
+    depends_on:
+      - rabbitmq
+      - postgres
+  accounting_service:
+    build: 
+      context: accounting_service
+      dockerfile: Dockerfile
+    image: accounting_service
+    container_name: accounting_service
+    ports:
+      - "8084:8084"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE}
+      CUSTOMER_SERVICE_REQUEST_CHANNEL: ${CUSTOMER_SERVICE_REQUEST_CHANNEL}
+      ACCOUNTING_SERVICE_REQUEST_CHANNEL: ${ACCOUNTING_SERVICE_REQUEST_CHANNEL}
+      KITCHEN_SERVICE_REQUEST_CHANNEL: ${KITCHEN_SERVICE_REQUEST_CHANNEL}
+      CREATE_ORDER_SAGA_REPLY_CHANNEL: ${CREATE_ORDER_SAGA_REPLY_CHANNEL}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER_ACCOUNTING_SERVICE}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_ACCOUNTING_SERVICE}
+      POSTGRES_DB: ${POSTGRES_DB_ACCOUNTING_SERVICE}
+    depends_on:
+      - rabbitmq
+      - postgres

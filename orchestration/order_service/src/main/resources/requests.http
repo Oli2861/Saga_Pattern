@@ -1,0 +1,75 @@
+### Create user
+POST http://localhost:8082/users
+content-type: application/json
+
+{
+  "id": 0,
+  "age": 28,
+  "firstName": "Max",
+  "lastName": "Mustermann",
+  "addresses": [
+    {
+      "id": 0,
+      "postCode": 9123,
+      "city": "Mustertown",
+      "houseNumber": "2c"
+    }
+  ]
+}
+
+### CreditCardInfo for user with id 1
+POST http://localhost:8084/creditcardinfo
+content-type: application/json
+
+{
+  "userId": 1,
+  "info": "test"
+}
+
+### Execute saga
+POST http://localhost:8081/order
+content-type: application/json
+
+{
+  "customerId": 1,
+  "address": {
+    "postCode": 9123,
+    "city": "Mustertown",
+    "houseNumber": "2c"
+  },
+  "paymentInfo": "test",
+  "items": [
+    {
+      "articleNumber": 1,
+      "amount": 3
+    },
+    {
+      "articleNumber": 2,
+      "amount": 4
+    }
+  ]
+}
+
+### Execute saga (fails as payment info is not correct)
+POST http://localhost:8081/order
+content-type: application/json
+
+{
+  "customerId": 1,
+  "address": {
+    "postCode": 9123,
+    "city": "Mustertown",
+    "houseNumber": "2c"
+  },
+  "paymentInfo": "incorrect",
+  "items": [
+    {
+      "articleNumber": 1,
+      "amount": 3
+    },
+    {
+      "articleNumber": 2,
+      "amount": 4
+    }
+  ]
+}

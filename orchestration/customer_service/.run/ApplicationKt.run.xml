@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ApplicationKt" type="JetRunConfigurationType" nameIsGenerated="true">
+    <envs>
+      <env name="POSTGRES_DB" value="customerdb" />
+      <env name="POSTGRES_HOST" value="localhost" />
+      <env name="POSTGRES_PASSWORD" value="password" />
+      <env name="POSTGRES_PORT" value="5432" />
+      <env name="POSTGRES_USER" value="user" />
+      <env name="RABBITMQ_HOST" value="localhost" />
+      <env name="RABBITMQ_PORT" value="5672" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.oli.ApplicationKt" />
+    <module name="customer_service.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
