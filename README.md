@@ -9,7 +9,4 @@ So far i did not implement the choreography-based version. My implementation is 
 - Prevent infinite retries if a service is not available --> Look into circuit breaker pattern / exponential backoff
 - Upgrade to postgres 15
 
-##### Issues
-- Services apart from the order service can not connect to rabbitmq yet, when run in docker. This is not the case if the applications are run directly on the host machine and postgres & rabbitmq using docker as specified in docker-compose.yml.
-
 [1]:https://github.com/eventuate-tram/eventuate-tram-sagas

@@ -1,0 +1,21 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="orderservice" type="JetRunConfigurationType">
+    <envs>
+      <env name="POSTGRES_DB" value="orderdb" />
+      <env name="POSTGRES_HOST" value="localhost" />
+      <env name="POSTGRES_PASSWORD" value="password" />
+      <env name="POSTGRES_PORT" value="5432" />
+      <env name="POSTGRES_USER" value="user" />
+      <env name="RABBITMQ_EXCHANGE" value="exc" />
+      <env name="RABBITMQ_HOST" value="localhost" />
+      <env name="RABBITMQ_PORT" value="5672" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.oli.ApplicationKt" />
+    <module name="order_service.main" />
+    <option name="PASS_PARENT_ENVS" value="false" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

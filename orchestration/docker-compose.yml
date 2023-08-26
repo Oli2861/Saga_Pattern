@@ -8,6 +8,11 @@ services:
     volumes:
       - ./volumes/rabbitmq:/var/lib/rabbitmq/:rw
       - ./volumes/rabbitmq/log:/var/log/rabbitmq/:rw
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics check_port_connectivity"]
+      interval: 60s
+      timeout: 60s
+      retries: 4
   postgres:
     image: postgres:14
     container_name: postgres
@@ -20,9 +25,14 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/create_tables.sql
       - ./volumes/postgres/data/order_service:/var/lib/postgresql/data:rw
       - ./volumes/postgres/logs/order_service:/var/log/postgresql:rw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 60s
+      timeout: 60s
+      retries: 4
   order_service:
     build:
-      context: order_service
+      context: app/order_service
       dockerfile: Dockerfile
     image: order_service
     container_name: order_service
@@ -42,11 +52,13 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_ORDER_SERVICE}
       POSTGRES_DB: ${POSTGRES_DB_ORDER_SERVICE}
     depends_on:
-      - rabbitmq
-      - postgres
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
   customer_service:
     build:
-      context: customer_service
+      context: app/customer_service
       dockerfile: Dockerfile
     image: customer_service
     container_name: customer_service
@@ -66,14 +78,16 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_CUSTOMER_SERVICE}
       POSTGRES_DB: ${POSTGRES_DB_CUSTOMER_SERVICE}
     depends_on:
-      - rabbitmq
-      - postgres
-  kitchenservice_service:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+  kitchen_service:
     build: 
-      context: kitchenservice
+      context: app/kitchen_service
       dockerfile: Dockerfile
     image: kitchen_service
-    container_name: kitchenservice_service
+    container_name: kitchen_service
     ports:
       - "8083:8083"
     environment:
@@ -90,11 +104,13 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_KITCHEN_SERVICE}
       POSTGRES_DB: ${POSTGRES_DB_KITCHEN_SERVICE}
     depends_on:
-      - rabbitmq
-      - postgres
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
   accounting_service:
     build: 
-      context: accounting_service
+      context: app/accounting_service
       dockerfile: Dockerfile
     image: accounting_service
     container_name: accounting_service
@@ -114,5 +130,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_ACCOUNTING_SERVICE}
       POSTGRES_DB: ${POSTGRES_DB_ACCOUNTING_SERVICE}
     depends_on:
-      - rabbitmq
-      - postgres
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
