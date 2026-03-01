@@ -1,7 +1,7 @@
 # saga_pattern
 
 Implementation of the saga pattern for learning purposes. The saga pattern can be implemented either orchestration-based or a choreography-based. 
-So far i did not implement the orchestration-based version. My implementation is based on the descriptions in Microservices Patterns (Chris Richardson, ISBN 9781617294549). I do not use the Eventuate Tram Sagas Framework ([1]) but rather try to implement the described logic myself.
+So far i did not implement the choreography-based version. My implementation is based on the descriptions in Microservices Patterns (Chris Richardson, ISBN 9781617294549). I do not use the Eventuate Tram Sagas Framework ([1]) but rather try to implement the described logic myself.
 
 
 ## Saga Orchestration
@@ -29,6 +29,7 @@ Properties:
 
 
 ## Saga Choreography
+The propably most interesting part is in my opinion the (definition of the Create Order Saga)[https://github.com/Oli2861/Saga_Pattern/blob/main/orchestration/app/order_service/src/main/kotlin/com/oli/saga/CreateOrderSagaDefinition.kt].
 ```mermaid
 graph TD
     A[Client] --> C[Service 1]
